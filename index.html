@@ -542,15 +542,19 @@
             setTimeout(() => {
                 event.currentTarget.style.transform = '';
             }, 150);
-
-            // Simulate navigation - in a real implementation, this would navigate to the region-specific page
+        
+            // Navigate to the actual region page
             setTimeout(() => {
-                alert(`Navigating to ${region} region leaderboards...\n\nIn a full implementation, this would take you to the ${region}-specific leaderboard page with that region's data.`);
+                const regionPaths = {
+                    'NA': '/na/',
+                    'EU': '/eu/', 
+                    'ASIA': '/asia/'
+                };
                 
-                // Example of how you'd implement real navigation:
-                // window.location.href = `/${region.toLowerCase()}/leaderboards.html`;
-                // OR for a single-page app:
-                // showRegionPage(region);
+                const path = regionPaths[region];
+                if (path) {
+                    window.location.href = path;
+                }
             }, 200);
         }
 
