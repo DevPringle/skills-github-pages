@@ -322,6 +322,11 @@
             top: 0;
             z-index: 10;
             cursor: pointer;
+            user-select: none;
+        }
+        
+        .leaderboard-table th:hover {
+            background: linear-gradient(135deg, #ff8a8e, #fdbfdf);
         }
         
         .leaderboard-table td {
@@ -555,7 +560,7 @@
         </div>
     </div>
 
-<script>
+    <script>
         // Sample data for North America - REPLACE WITH YOUR ACTUAL NA DATA
         const sampleData = {
             jade: [
@@ -595,6 +600,20 @@
         let currentSeason = 'jade';
         let currentData = [];
         let filteredData = [];
+        
+        // Track sort state for each column
+        let sortStates = {
+            0: 'asc',    // rank - default ascending
+            1: null,     // player name
+            2: null,     // rating  
+            3: null,     // battles
+            4: null,     // prestige
+            5: null,     // winrate
+            6: null,     // damage
+            7: null,     // tank1
+            8: null,     // tank2
+            9: null      // tank3
+        };
 
         // Initialize all functions
         function switchSeason(season) {
@@ -604,6 +623,11 @@
             currentSeason = season;
             currentData = [...(sampleData[season] || sampleData.jade)];
             filteredData = [...currentData];
+            
+            // Reset sort states when switching seasons
+            Object.keys(sortStates).forEach(key => {
+                sortStates[key] = key === '0' ? 'asc' : null;
+            });
             
             // Update the header text and emoji based on season
             if (season === 'jade') {
@@ -743,11 +767,66 @@
             const sortKeys = ['rank', 'player', 'rating', 'battles', 'prestige', 'winrate', 'damage', 'tank1', 'tank2', 'tank3'];
             const key = sortKeys[columnIndex];
             
+            // Determine current sort direction
+            let currentSort = sortStates[columnIndex];
+            let newSort;
+            
+            // For numerical columns (all except player name and tank names)
+            if ([0, 2, 3, 4, 5, 6].includes(columnIndex)) {
+                if (currentSort === null) {
+                    newSort = 'desc'; // First click: highest to lowest
+                } else if (currentSort === 'desc') {
+                    newSort = 'asc';  // Second click: lowest to highest
+                } else {
+                    newSort = 'desc'; // Back to highest to lowest
+                }
+            }
+            // For text columns (player name and tank names)
+            else if ([1, 7, 8, 9].includes(columnIndex)) {
+                if (currentSort === null) {
+                    newSort = 'asc';  // First click: A-Z (numbers/special chars first)
+                } else if (currentSort === 'asc') {
+                    newSort = 'desc'; // Second click: Z-A (numbers/special chars last)
+                } else {
+                    newSort = 'asc';  // Back to A-Z
+                }
+            }
+            
+            // Update sort state
+            sortStates[columnIndex] = newSort;
+            
+            // Custom sorting function for text that handles special characters
+            function customTextSort(a, b, ascending) {
+                const aVal = a[key].toLowerCase();
+                const bVal = b[key].toLowerCase();
+                
+                if (ascending) {
+                    // A-Z: numbers and special chars come before letters
+                    return aVal.localeCompare(bVal, undefined, {numeric: true, sensitivity: 'base'});
+                } else {
+                    // Z-A: letters come first, then numbers and special chars
+                    const aIsLetter = /^[a-z]/.test(aVal);
+                    const bIsLetter = /^[a-z]/.test(bVal);
+                    
+                    if (aIsLetter && !bIsLetter) return -1;
+                    if (!aIsLetter && bIsLetter) return 1;
+                    
+                    return bVal.localeCompare(aVal, undefined, {numeric: true, sensitivity: 'base'});
+                }
+            }
+            
+            // Sort the data
             filteredData.sort((a, b) => {
                 if (typeof a[key] === 'string') {
-                    return a[key].localeCompare(b[key]);
+                    return customTextSort(a, b, newSort === 'asc');
+                } else {
+                    // Numerical sorting
+                    if (newSort === 'desc') {
+                        return b[key] - a[key]; // Descending: highest first
+                    } else {
+                        return a[key] - b[key]; // Ascending: lowest first
+                    }
                 }
-                return a[key] - b[key];
             });
 
             populateTable(filteredData);
