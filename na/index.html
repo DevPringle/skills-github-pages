@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>North America - Onslaught Archive</title>
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://devpringle.github.io/onslaughtarchive/na/">
+    <meta property="og:title" content="North America Leaderboard - Onslaught Archive">
+    <meta property="og:description" content="Top World of Tanks Onslaught players in North America. View ratings, stats, and tank preferences for the best NA tankers.">
+    <meta property="og:image" content="https://devpringle.github.io/onslaughtarchive/images/preview.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://devpringle.github.io/onslaughtarchive/na/">
+    <meta property="twitter:title" content="North America Leaderboard - Onslaught Archive">
+    <meta property="twitter:description" content="Top World of Tanks Onslaught players in North America. View ratings, stats, and tank preferences for the best NA tankers.">
+    <meta property="twitter:image" content="https://devpringle.github.io/onslaughtarchive/images/preview.png">
+
     <style>
         * {
             margin: 0;
@@ -219,6 +234,72 @@
         .table-container {
             max-height: 600px;
             overflow-y: auto;
+        }
+        
+        /* Rank divider styling */
+        .rank-divider {
+            background: transparent;
+            color: white;
+            text-align: center;
+            padding: 0;
+            font-weight: bold;
+            font-size: 1.2em;
+            position: relative;
+            height: 50px;
+            border: none;
+            z-index: 15;
+        }
+        
+        .rank-divider-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 16;
+        }
+        
+        .rank-divider.legend .rank-divider-content {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .rank-divider.champion .rank-divider-content {
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .rank-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ddd, #999, #ddd);
+            z-index: 15;
+        }
+        
+        .rank-divider.legend::before {
+            background: linear-gradient(90deg, #e74c3c, #c0392b, #e74c3c);
+        }
+        
+        .rank-divider.champion::before {
+            background: linear-gradient(90deg, #f39c12, #e67e22, #f39c12);
+        }
+        
+        .rank-icon {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
         }
         
         .leaderboard-table {
@@ -497,8 +578,7 @@
             ],
             season2: [
                 {rank: 1, player: "NewChampion_NA", rating: 2892, battles: 149, prestige: 19.1, winrate: 75.2, damage: 3367, tank1: "Chieftain", tank2: "Obj. 430U", tank3: "STB-1"},
-                {rank: 2, player: "TankAce_NA", rating: 2879, battles: 163, prestige: 18.8, winrate: 74.1, damage: 3289, tank1: "Obj. 430U", tank2: "STB-1", tank3: "Leopard 1"},
-                // Add more season 2 data...
+                {rank: 2, player: "TankAce_NA", rating: 2879, battles: 163, prestige: 18.8, winrate: 74.1, damage: 3289, tank1: "Obj. 430U", tank2: "STB-1", tank3: "Leopard 1"}
             ]
         };
 
@@ -508,17 +588,13 @@
 
         // Initialize all functions
         function switchSeason(season) {
-            // Remove active class from all tabs
             document.querySelectorAll('.season-tab').forEach(tab => tab.classList.remove('active'));
-            
-            // Add active class to clicked tab
             event.target.classList.add('active');
             
             currentSeason = season;
             currentData = [...(sampleData[season] || sampleData.season1)];
             filteredData = [...currentData];
             
-            // Update season title
             const seasonNum = season.replace('season', '');
             document.getElementById('seasonTitle').textContent = `📊 Season ${seasonNum} - North America Leaderboard`;
             
@@ -559,11 +635,54 @@
             updateStats();
         }
 
+        function calculateRankThresholds(data) {
+            const totalPlayers = data.length;
+            const legendThreshold = Math.ceil(totalPlayers * 0.15); // Top 15% are Legend
+            
+            return {
+                legendThreshold: legendThreshold
+            };
+        }
+
         function populateTable(data) {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
+            
+            const thresholds = calculateRankThresholds(data);
+            let legendDividerAdded = false;
+            let championDividerAdded = false;
 
-            data.forEach(player => {
+            data.forEach((player, index) => {
+                // Add Legend divider at the top (before rank 1)
+                if (index === 0 && !legendDividerAdded) {
+                    const legendDivider = document.createElement('tr');
+                    legendDivider.innerHTML = `
+                        <td colspan="10" class="rank-divider legend">
+                            <div class="rank-divider-content">
+                                <img src="../images/legend-icon.png" alt="Legend" class="rank-icon" onerror="this.style.display='none'">
+                                LEGEND
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(legendDivider);
+                    legendDividerAdded = true;
+                }
+                
+                // Add Champion divider when we pass the Legend threshold
+                if (player.rank > thresholds.legendThreshold && !championDividerAdded) {
+                    const championDivider = document.createElement('tr');
+                    championDivider.innerHTML = `
+                        <td colspan="10" class="rank-divider champion">
+                            <div class="rank-divider-content">
+                                <img src="../images/champion-icon.png" alt="Champion" class="rank-icon" onerror="this.style.display='none'">
+                                CHAMPION
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(championDivider);
+                    championDividerAdded = true;
+                }
+
                 const row = document.createElement('tr');
                 
                 // Apply rank-based styling
