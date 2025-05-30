@@ -257,7 +257,6 @@
             overflow-y: auto;
         }
         
-        /* Rank divider styling */
         .rank-divider {
             background: transparent;
             color: white;
@@ -561,10 +560,8 @@
     </div>
 
     <script>
-        // Sample data for North America - REPLACE WITH YOUR ACTUAL NA DATA
         const sampleData = {
             jade: [
-                // TOP 10 PLAYERS - Elite Unicum Tier (NA) - JADE SEASON
                 {rank: 1, player: "DarkNinja_", rating: 14558, battles: 1609, prestige: 124, winrate: 57.99, damage: 3193, tank1: "Rhm. Pzw.", tank2: "B-C 25 t", tank3: "FV4005"},
                 {rank: 2, player: "John_The_Terrible", rating: 13180, battles: 1248, prestige: 129, winrate: 58.81, damage: 3464, tank1: "Foch B", tank2: "B-C 25 t", tank3: "Rhm. Pzw."},
                 {rank: 3, player: "KuTaucKuu_OxoTHuK_cucEK", rating: 10493, battles: 837, prestige: 134, winrate: 60.1, damage: 3477, tank1: "Rhm. Pzw.", tank2: "B-C 25 t", tank3: "Obj. 430U"},
@@ -575,8 +572,6 @@
                 {rank: 8, player: "LightScout_USA", rating: 2761, battles: 168, prestige: 16.5, winrate: 64.8, damage: 2892, tank1: "EBR 105", tank2: "T-100 LT", tank3: "Obj. 279e"},
                 {rank: 9, player: "ArtilleryKing_NA", rating: 2748, battles: 134, prestige: 16.3, winrate: 63.9, damage: 2847, tank1: "Obj. 261", tank2: "T92 HMC", tank3: "Conq. GC"},
                 {rank: 10, player: "ClutchMaster_US", rating: 2735, battles: 141, prestige: 16.1, winrate: 62.8, damage: 2803, tank1: "Obj. 277", tank2: "Kranvagn", tank3: "IS-7"},
-                
-                // Add more North American players here...
                 {rank: 50, player: "MidTier_Warrior_NA", rating: 2215, battles: 198, prestige: 8.1, winrate: 34.2, damage: 1480, tank1: "IS-3", tank2: "T-54", tank3: "Obj. 704"},
                 {rank: 100, player: "Century_Player_US", rating: 1812, battles: 229, prestige: 5.7, winrate: 25.4, damage: 1045, tank1: "Tiger II", tank2: "T32", tank3: "Obj. 416"},
                 {rank: 500, player: "Average_Joe_NA", rating: 556, battles: 517, prestige: 2.1, winrate: 14.8, damage: 251, tank1: "KV-1", tank2: "T1 Heavy", tank3: "O-I"},
@@ -584,14 +579,11 @@
                 {rank: 2000, player: "Learning_Player_NA", rating: 23, battles: 1185, prestige: 0.3, winrate: 11.2, damage: 18, tank1: "KV-1", tank2: "T1 Heavy", tank3: "M6"}
             ],
             crimson: [
-                // CRIMSON SEASON DATA - Previous season
                 {rank: 1, player: "CrimsonChamp_NA", rating: 2892, battles: 149, prestige: 19.1, winrate: 75.2, damage: 3367, tank1: "Chieftain", tank2: "Obj. 430U", tank3: "STB-1"},
                 {rank: 2, player: "TankAce_NA", rating: 2879, battles: 163, prestige: 18.8, winrate: 74.1, damage: 3289, tank1: "Obj. 430U", tank2: "STB-1", tank3: "Leopard 1"},
                 {rank: 3, player: "RedWarrior_US", rating: 2856, battles: 157, prestige: 18.4, winrate: 72.8, damage: 3201, tank1: "IS-7", tank2: "Obj. 277", tank3: "Super Conq."},
                 {rank: 4, player: "CrimsonStorm_NA", rating: 2834, battles: 151, prestige: 18.1, winrate: 71.5, damage: 3145, tank1: "STB-1", tank2: "Leopard 1", tank3: "Obj. 140"},
                 {rank: 5, player: "BloodTank_USA", rating: 2812, battles: 164, prestige: 17.8, winrate: 70.2, damage: 3089, tank1: "Kranvagn", tank2: "Obj. 430U", tank3: "Progetto 65"},
-                
-                // Add more Crimson season players...
                 {rank: 50, player: "CrimsonMid_NA", rating: 2189, battles: 203, prestige: 7.9, winrate: 33.8, damage: 1445, tank1: "IS-3", tank2: "T-54", tank3: "Obj. 704"},
                 {rank: 100, player: "RedCentury_US", rating: 1789, battles: 234, prestige: 5.5, winrate: 24.9, damage: 1021, tank1: "Tiger II", tank2: "T32", tank3: "Obj. 416"}
             ]
@@ -601,21 +593,11 @@
         let currentData = [];
         let filteredData = [];
         
-        // Track sort state for each column
         let sortStates = {
-            0: 'asc',    // rank - default ascending
-            1: null,     // player name
-            2: null,     // rating  
-            3: null,     // battles
-            4: null,     // prestige
-            5: null,     // winrate
-            6: null,     // damage
-            7: null,     // tank1
-            8: null,     // tank2
-            9: null      // tank3
+            0: 'asc', 1: null, 2: null, 3: null, 4: null, 
+            5: null, 6: null, 7: null, 8: null, 9: null
         };
 
-        // Initialize all functions
         function switchSeason(season) {
             document.querySelectorAll('.season-tab').forEach(tab => tab.classList.remove('active'));
             event.target.classList.add('active');
@@ -624,12 +606,10 @@
             currentData = [...(sampleData[season] || sampleData.jade)];
             filteredData = [...currentData];
             
-            // Reset sort states when switching seasons
             Object.keys(sortStates).forEach(key => {
                 sortStates[key] = key === '0' ? 'asc' : null;
             });
             
-            // Update the header text and emoji based on season
             if (season === 'jade') {
                 document.getElementById('seasonTitle').textContent = `🟢 Season of the Jade Manticore - North America Leaderboard`;
             } else if (season === 'crimson') {
@@ -675,11 +655,24 @@
 
         function calculateRankThresholds(data) {
             const totalPlayers = data.length;
-            const legendThreshold = Math.ceil(totalPlayers * 0.15); // Top 15% are Legend
+            const legendThreshold = Math.ceil(totalPlayers * 0.15);
             
-            return {
-                legendThreshold: legendThreshold
-            };
+            return { legendThreshold: legendThreshold };
+        }
+
+        function shouldShowRankDividers() {
+            const activeSorts = Object.entries(sortStates).filter(([col, state]) => state !== null);
+            
+            if (activeSorts.length === 0 || 
+                (activeSorts.length === 1 && activeSorts[0][0] === '0')) {
+                return true;
+            }
+            
+            if (activeSorts.length === 1 && activeSorts[0][0] === '2') {
+                return true;
+            }
+            
+            return false;
         }
 
         function populateTable(data) {
@@ -691,39 +684,40 @@
             let championDividerAdded = false;
 
             data.forEach((player, index) => {
-                // Add Legend divider at the top (before rank 1)
-                if (index === 0 && !legendDividerAdded) {
-                    const legendDivider = document.createElement('tr');
-                    legendDivider.innerHTML = `
-                        <td colspan="10" class="rank-divider legend">
-                            <div class="rank-divider-content">
-                                <img src="../images/legend-icon.png" alt="Legend" class="rank-icon" onerror="this.style.display='none'">
-                                LEGEND
-                            </div>
-                        </td>
-                    `;
-                    tbody.appendChild(legendDivider);
-                    legendDividerAdded = true;
-                }
+                const showDividers = shouldShowRankDividers();
                 
-                // Add Champion divider when we pass the Legend threshold
-                if (player.rank > thresholds.legendThreshold && !championDividerAdded) {
-                    const championDivider = document.createElement('tr');
-                    championDivider.innerHTML = `
-                        <td colspan="10" class="rank-divider champion">
-                            <div class="rank-divider-content">
-                                <img src="../images/champion-icon.png" alt="Champion" class="rank-icon" onerror="this.style.display='none'">
-                                CHAMPION
-                            </div>
-                        </td>
-                    `;
-                    tbody.appendChild(championDivider);
-                    championDividerAdded = true;
+                if (showDividers) {
+                    if (index === 0 && !legendDividerAdded) {
+                        const legendDivider = document.createElement('tr');
+                        legendDivider.innerHTML = `
+                            <td colspan="10" class="rank-divider legend">
+                                <div class="rank-divider-content">
+                                    <img src="../images/legend-icon.png" alt="Legend" class="rank-icon" onerror="this.style.display='none'">
+                                    LEGEND
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(legendDivider);
+                        legendDividerAdded = true;
+                    }
+                    
+                    if (player.rank > thresholds.legendThreshold && !championDividerAdded) {
+                        const championDivider = document.createElement('tr');
+                        championDivider.innerHTML = `
+                            <td colspan="10" class="rank-divider champion">
+                                <div class="rank-divider-content">
+                                    <img src="../images/champion-icon.png" alt="Champion" class="rank-icon" onerror="this.style.display='none'">
+                                    CHAMPION
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(championDivider);
+                        championDividerAdded = true;
+                    }
                 }
 
                 const row = document.createElement('tr');
                 
-                // Apply rank-based styling
                 let rankClass = '';
                 if (player.rank === 1) rankClass = 'rank-1';
                 else if (player.rank === 2) rankClass = 'rank-2';
@@ -731,13 +725,11 @@
                 else if (player.rank <= 10) rankClass = 'rank-top10';
                 else if (player.rank <= 100) rankClass = 'rank-top100';
 
-                // Apply rating-based styling
                 let ratingClass = '';
                 if (player.rating >= 2500) ratingClass = 'rating-high';
                 else if (player.rating >= 2000) ratingClass = 'rating-medium';
                 else ratingClass = 'rating-low';
 
-                // Apply win rate styling
                 let winrateClass = '';
                 if (player.winrate >= 65) winrateClass = 'winrate-high';
                 else if (player.winrate >= 55) winrateClass = 'winrate-medium';
@@ -767,44 +759,42 @@
             const sortKeys = ['rank', 'player', 'rating', 'battles', 'prestige', 'winrate', 'damage', 'tank1', 'tank2', 'tank3'];
             const key = sortKeys[columnIndex];
             
-            // Determine current sort direction
+            Object.keys(sortStates).forEach(col => {
+                if (parseInt(col) !== columnIndex) {
+                    sortStates[col] = null;
+                }
+            });
+            
             let currentSort = sortStates[columnIndex];
             let newSort;
             
-            // For numerical columns (all except player name and tank names)
             if ([0, 2, 3, 4, 5, 6].includes(columnIndex)) {
                 if (currentSort === null) {
-                    newSort = 'desc'; // First click: highest to lowest
+                    newSort = 'desc';
                 } else if (currentSort === 'desc') {
-                    newSort = 'asc';  // Second click: lowest to highest
+                    newSort = 'asc';
                 } else {
-                    newSort = 'desc'; // Back to highest to lowest
+                    newSort = 'desc';
                 }
-            }
-            // For text columns (player name and tank names)
-            else if ([1, 7, 8, 9].includes(columnIndex)) {
+            } else if ([1, 7, 8, 9].includes(columnIndex)) {
                 if (currentSort === null) {
-                    newSort = 'asc';  // First click: A-Z (numbers/special chars first)
+                    newSort = 'asc';
                 } else if (currentSort === 'asc') {
-                    newSort = 'desc'; // Second click: Z-A (numbers/special chars last)
+                    newSort = 'desc';
                 } else {
-                    newSort = 'asc';  // Back to A-Z
+                    newSort = 'asc';
                 }
             }
             
-            // Update sort state
             sortStates[columnIndex] = newSort;
             
-            // Custom sorting function for text that handles special characters
             function customTextSort(a, b, ascending) {
                 const aVal = a[key].toLowerCase();
                 const bVal = b[key].toLowerCase();
                 
                 if (ascending) {
-                    // A-Z: numbers and special chars come before letters
                     return aVal.localeCompare(bVal, undefined, {numeric: true, sensitivity: 'base'});
                 } else {
-                    // Z-A: letters come first, then numbers and special chars
                     const aIsLetter = /^[a-z]/.test(aVal);
                     const bIsLetter = /^[a-z]/.test(bVal);
                     
@@ -815,16 +805,14 @@
                 }
             }
             
-            // Sort the data
             filteredData.sort((a, b) => {
                 if (typeof a[key] === 'string') {
                     return customTextSort(a, b, newSort === 'asc');
                 } else {
-                    // Numerical sorting
                     if (newSort === 'desc') {
-                        return b[key] - a[key]; // Descending: highest first
+                        return b[key] - a[key];
                     } else {
-                        return a[key] - b[key]; // Ascending: lowest first
+                        return a[key] - b[key];
                     }
                 }
             });
@@ -840,7 +828,6 @@
             const avgWinRate = (filteredData.reduce((sum, p) => sum + p.winrate, 0) / totalPlayers).toFixed(1);
             const avgDamage = Math.round(filteredData.reduce((sum, p) => sum + p.damage, 0) / totalPlayers);
             
-            // Find most popular tank
             const tankCounts = {};
             filteredData.forEach(p => {
                 [p.tank1, p.tank2, p.tank3].forEach(tank => {
@@ -922,7 +909,6 @@
             }
         }
 
-        // Close modal when clicking outside
         window.onclick = function(event) {
             const modal = document.getElementById('playerModal');
             if (event.target === modal) {
@@ -930,7 +916,6 @@
             }
         }
 
-        // Add keyboard shortcuts
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeModal();
@@ -941,7 +926,6 @@
             }
         });
 
-        // Initialize table on page load
         window.onload = function() {
             initializeTable();
         }
