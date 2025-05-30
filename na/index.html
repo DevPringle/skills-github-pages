@@ -125,6 +125,27 @@
             box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
         }
         
+        .season-tab.jade {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+        
+        .season-tab.jade:hover {
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+        }
+        
+        .season-tab.jade.active {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.6);
+        }
+        
+        .season-tab.crimson {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .season-tab.crimson:hover {
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+        }
+        
         .filters {
             display: flex;
             gap: 10px;
@@ -455,8 +476,8 @@
         
         <div class="controls">
             <div class="season-tabs">
-                <button class="season-tab active" onclick="switchSeason('season1')">Season 1</button>
-                <button class="season-tab" onclick="switchSeason('season2')">Season 2</button>
+                <button class="season-tab jade active" onclick="switchSeason('jade')">Jade</button>
+                <button class="season-tab crimson" onclick="switchSeason('crimson')">Crimson</button>
             </div>
             
             <div class="filters">
@@ -514,7 +535,7 @@
         
         <div class="leaderboard">
             <div class="leaderboard-header">
-                <span id="seasonTitle">📊 Season 1 - North America Leaderboard</span>
+                <span id="seasonTitle">🟢 Jade Season - North America Leaderboard</span>
                 <span id="playerCount">Showing 2000 players</span>
             </div>
             
@@ -556,8 +577,8 @@
 <script>
         // Sample data for North America - REPLACE WITH YOUR ACTUAL NA DATA
         const sampleData = {
-            season1: [
-                // TOP 10 PLAYERS - Elite Unicum Tier (NA)
+            jade: [
+                // TOP 10 PLAYERS - Elite Unicum Tier (NA) - JADE SEASON
                 {rank: 1, player: "TankAce_NA", rating: 2847, battles: 156, prestige: 18.3, winrate: 73.5, damage: 3245, tank1: "Obj. 430U", tank2: "STB-1", tank3: "Leopard 1"},
                 {rank: 2, player: "ArmorMaster_US", rating: 2834, battles: 148, prestige: 17.9, winrate: 71.2, damage: 3198, tank1: "IS-7", tank2: "Super Conq.", tank3: "Obj. 277"},
                 {rank: 3, player: "GunDepression_NA", rating: 2821, battles: 162, prestige: 17.7, winrate: 69.8, damage: 3156, tank1: "Kranvagn", tank2: "STB-1", tank3: "Progetto 65"},
@@ -576,13 +597,21 @@
                 {rank: 1000, player: "Grinder_US", rating: 167, battles: 877, prestige: 1.1, winrate: 12.6, damage: 81, tank1: "KV-1", tank2: "T1 Heavy", tank3: "M6"},
                 {rank: 2000, player: "Learning_Player_NA", rating: 23, battles: 1185, prestige: 0.3, winrate: 11.2, damage: 18, tank1: "KV-1", tank2: "T1 Heavy", tank3: "M6"}
             ],
-            season2: [
-                {rank: 1, player: "NewChampion_NA", rating: 2892, battles: 149, prestige: 19.1, winrate: 75.2, damage: 3367, tank1: "Chieftain", tank2: "Obj. 430U", tank3: "STB-1"},
-                {rank: 2, player: "TankAce_NA", rating: 2879, battles: 163, prestige: 18.8, winrate: 74.1, damage: 3289, tank1: "Obj. 430U", tank2: "STB-1", tank3: "Leopard 1"}
+            crimson: [
+                // CRIMSON SEASON DATA - Previous season
+                {rank: 1, player: "CrimsonChamp_NA", rating: 2892, battles: 149, prestige: 19.1, winrate: 75.2, damage: 3367, tank1: "Chieftain", tank2: "Obj. 430U", tank3: "STB-1"},
+                {rank: 2, player: "TankAce_NA", rating: 2879, battles: 163, prestige: 18.8, winrate: 74.1, damage: 3289, tank1: "Obj. 430U", tank2: "STB-1", tank3: "Leopard 1"},
+                {rank: 3, player: "RedWarrior_US", rating: 2856, battles: 157, prestige: 18.4, winrate: 72.8, damage: 3201, tank1: "IS-7", tank2: "Obj. 277", tank3: "Super Conq."},
+                {rank: 4, player: "CrimsonStorm_NA", rating: 2834, battles: 151, prestige: 18.1, winrate: 71.5, damage: 3145, tank1: "STB-1", tank2: "Leopard 1", tank3: "Obj. 140"},
+                {rank: 5, player: "BloodTank_USA", rating: 2812, battles: 164, prestige: 17.8, winrate: 70.2, damage: 3089, tank1: "Kranvagn", tank2: "Obj. 430U", tank3: "Progetto 65"},
+                
+                // Add more Crimson season players...
+                {rank: 50, player: "CrimsonMid_NA", rating: 2189, battles: 203, prestige: 7.9, winrate: 33.8, damage: 1445, tank1: "IS-3", tank2: "T-54", tank3: "Obj. 704"},
+                {rank: 100, player: "RedCentury_US", rating: 1789, battles: 234, prestige: 5.5, winrate: 24.9, damage: 1021, tank1: "Tiger II", tank2: "T32", tank3: "Obj. 416"}
             ]
         };
 
-        let currentSeason = 'season1';
+        let currentSeason = 'jade';
         let currentData = [];
         let filteredData = [];
 
@@ -592,11 +621,15 @@
             event.target.classList.add('active');
             
             currentSeason = season;
-            currentData = [...(sampleData[season] || sampleData.season1)];
+            currentData = [...(sampleData[season] || sampleData.jade)];
             filteredData = [...currentData];
             
-            const seasonNum = season.replace('season', '');
-            document.getElementById('seasonTitle').textContent = `📊 Season ${seasonNum} - North America Leaderboard`;
+            // Update the header text and emoji based on season
+            if (season === 'jade') {
+                document.getElementById('seasonTitle').textContent = `🟢 Jade Season - North America Leaderboard`;
+            } else if (season === 'crimson') {
+                document.getElementById('seasonTitle').textContent = `🔴 Crimson Season - North America Leaderboard`;
+            }
             
             populateTable(filteredData);
             updateStats();
@@ -629,7 +662,7 @@
         }
 
         function initializeTable() {
-            currentData = [...sampleData.season1];
+            currentData = [...sampleData.jade];
             filteredData = [...currentData];
             populateTable(filteredData);
             updateStats();
