@@ -557,13 +557,13 @@
 
     <script>
         function navigateToRegion(region) {
-            // Add visual feedback
+            // visual feedback
             event.currentTarget.style.transform = 'scale(0.95)';
             setTimeout(() => {
                 event.currentTarget.style.transform = '';
             }, 150);
         
-            // Navigate to the actual region page - GitHub Pages compatible
+            // Navigate to the region page - GitHub Pages compatible
             setTimeout(() => {
                 const regionPaths = {
                     'NA': '/onslaughtarchive/na/index',
@@ -578,9 +578,9 @@
             }, 200);
         }
 
-        // Add some interactive enhancements
+        // interactive enhancements
         document.addEventListener('DOMContentLoaded', function() {
-            // Animate stat cards on scroll
+            // Animated stat cards on scroll
             const observerOptions = {
                 threshold: 0.1,
                 rootMargin: '0px 0px -50px 0px'
@@ -599,7 +599,7 @@
             });
         });
 
-        // Add CSS animation for fade in
+        // CSS animation for fade in
         const style = document.createElement('style');
         style.textContent = `
             @keyframes fadeInUp {
